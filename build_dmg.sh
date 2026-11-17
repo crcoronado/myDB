@@ -25,9 +25,9 @@ iconutil -c icns "$ICONSET" -o build/myDB.icns
 # 3) the .app bundle
 build/venv/bin/pyinstaller --noconfirm --clean --windowed \
   --name myDB --osx-bundle-identifier com.crc.mydb \
-  --icon build/myDB.icns --add-data "data:data" \
+  --icon "$PWD/build/myDB.icns" --add-data "$PWD/data:data" \
   --distpath dist --workpath build/pyinstaller --specpath build \
-  myDB.py
+  "$PWD/myDB.py"
 PLIST=dist/myDB.app/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$PLIST"
 /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $VERSION" "$PLIST" 2>/dev/null \
