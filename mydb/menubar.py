@@ -6,6 +6,11 @@ PyObjC is missing) myDB falls back to its normal small window.
 from __future__ import annotations
 
 import argparse
+import faulthandler
+import os
+import queue
+import sys
+import time
 
 from mydb import system
 from mydb.hotkey import pretty_hotkey
@@ -21,21 +26,23 @@ def _target_class():
         from Foundation import NSObject
 
         class MyDBMenuTarget(NSObject):
+            # IMPORTANT: AppKit calls these methods while Tk's mainloop is busy inside
+            # Tcl with the Python GIL released. Calling tkinter from here corrupts its
+            # thread state ("Fatal Python error: PyEval_RestoreThread ... GIL is
+            # released") and aborts the app. So these methods only queue a command;
+            # MenuBar._poll() runs it from an ordinary Tk timer. Never touch tkinter here.
             def search_(self, sender):
-                self.app.root.after(0, self.app.open_search)
+                self.bar.commands.put("search")
 
             def settings_(self, sender):
-                def go():
-                    self.app.open_settings()
-                    system.bring_to_front(self.app.settings)
-                self.app.root.after(0, go)
+                self.bar.commands.put("settings")
 
             def accessibility_(self, sender):
                 from AppKit import NSURL, NSWorkspace
                 NSWorkspace.sharedWorkspace().openURL_(NSURL.URLWithString_(ACCESSIBILITY_URL))
 
             def quit_(self, sender):
-                self.app.root.after(0, self.app.quit)
+                self.bar.commands.put("quit")
 
             def menuWillOpen_(self, menu):  # refresh texts every time the menu opens
                 self.bar.refresh()
@@ -49,6 +56,7 @@ class MenuBar:
         from AppKit import (NSApplication, NSImage, NSMenu, NSMenuItem, NSStatusBar,
                             NSVariableStatusItemLength)
         self.app = app
+        self.commands: queue.Queue = queue.Queue()  # filled by menu clicks, drained by _poll
         self.target = _target_class().alloc().init()
         self.target.app = app
         self.target.bar = self
@@ -101,6 +109,26 @@ class MenuBar:
         NSApplication.sharedApplication().setActivationPolicy_(1)  # Accessory: no Dock icon
         app.root.withdraw()
         self.refresh()
+        app.root.after(50, self._poll)
+
+    def _poll(self) -> None:
+        """Run queued menu commands from a normal Tk timer (safe for tkinter)."""
+        try:
+            while True:
+                cmd = self.commands.get_nowait()
+                if cmd == "search":
+                    self.app.open_search()
+                elif cmd == "settings":
+                    self.app.open_settings()
+                    system.bring_to_front(self.app.settings)
+                elif cmd == "quit":
+                    self.app.quit()
+                    return  # the Tk root is gone; stop polling
+        except queue.Empty:
+            pass
+        except Exception as exc:  # never let one bad command kill the menu bar
+            print(f"myDB: menu command failed: {exc!r}", file=sys.stderr)
+        self.app.root.after(50, self._poll)
 
     def refresh(self) -> None:
         try:
@@ -130,8 +158,38 @@ def install(app) -> MenuBar | None:
     return bar
 
 
+def setup_logging() -> str | None:
+    """When started from Finder (no Terminal), send errors and crash dumps to a log file.
+
+    macOS: ~/Library/Logs/myDB.log (readable in Console.app). Returns the path, or None
+    when running in a Terminal (errors then stay visible there).
+    """
+    try:
+        if sys.stderr is not None and sys.stderr.isatty():
+            return None
+        if system.IS_MAC:
+            log_dir = os.path.expanduser("~/Library/Logs")
+        else:
+            from mydb.config import config_dir
+            log_dir = config_dir()
+        os.makedirs(log_dir, exist_ok=True)
+        path = os.path.join(log_dir, "myDB.log")
+        if os.path.exists(path) and os.path.getsize(path) > 1_000_000:  # keep it small
+            os.replace(path, path + ".1")
+        fh = open(path, "a", encoding="utf-8", buffering=1)
+        sys.stdout = sys.stderr = fh
+        faulthandler.enable(fh)  # also records hard crashes (like the GIL abort)
+        from mydb import __version__
+        print(f"\n=== myDB {__version__} started {time.strftime('%Y-%m-%d %H:%M:%S')} ===", file=fh)
+        return path
+    except Exception:
+        return None
+
+
 def main() -> None:
     from mydb.app import App
+
+    setup_logging()
 
     ap = argparse.ArgumentParser(description="myDB quick CSV search (menu-bar app on macOS)")
     ap.add_argument("--minimized", action="store_true", help="start minimised (window mode only)")
