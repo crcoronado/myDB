@@ -33,6 +33,7 @@ PLIST=dist/myDB.app/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Add :CFBundleVersion string $VERSION" "$PLIST" 2>/dev/null \
   || /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" "$PLIST"
 /usr/libexec/PlistBuddy -c "Add :NSHumanReadableCopyright string myDB quick CSV search" "$PLIST" 2>/dev/null || true
+/usr/libexec/PlistBuddy -c "Add :LSUIElement bool true" "$PLIST" 2>/dev/null || /usr/libexec/PlistBuddy -c "Set :LSUIElement true" "$PLIST"  # menu-bar app: no Dock icon
 codesign --force --deep --sign - dist/myDB.app   # ad-hoc signature (Info.plist changed)
 codesign --verify --deep --strict dist/myDB.app
 

@@ -23,12 +23,14 @@ The app is not signed with an Apple Developer ID, so macOS blocks it the first t
 3. myDB starts. macOS then asks for **Accessibility** permission, which the Ctrl+Shift+S hotkey needs:
    - Open System Settings → Privacy & Security → **Accessibility**.
    - Switch **myDB** on.
-4. Quit myDB (⌘Q) and open it again. The hotkey now works.
+4. Quit myDB (click the 🔍 icon in the menu bar → **Quit myDB**) and open it again. The hotkey now works.
+
+myDB lives in the **menu bar** (🔍 icon, top right). It has no Dock icon and no window. Click the icon for **Search…**, **Settings…** and **Quit myDB**. After each copy the icon briefly shows ✓, and the menu shows what was copied.
 
 Optional: add myDB to **System Settings → General → Login Items** so it starts with your Mac.
 
 ## Updating to a new version
-1. Quit myDB.
+1. Quit myDB (🔍 icon in the menu bar → **Quit myDB**).
 2. Drag the new version into Applications and choose **Replace**.
 3. Each build has a new local signature, so macOS may switch the Accessibility permission off. If the hotkey stops working:
    - Open Privacy & Security → Accessibility.
