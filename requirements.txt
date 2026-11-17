@@ -1,0 +1,6 @@
+# macOS (primary target): native hotkey, focus switching and auto-paste
+pyobjc-framework-Cocoa>=10.0; sys_platform == "darwin"
+pyobjc-framework-Quartz>=10.0; sys_platform == "darwin"
+pyobjc-framework-ApplicationServices>=10.0; sys_platform == "darwin"
+# Windows / Linux fallback
+pynput>=1.7.6; sys_platform != "darwin"

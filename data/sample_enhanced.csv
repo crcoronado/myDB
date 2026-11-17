@@ -1,0 +1,16 @@
+Part Number,Description,Price,Currency,Category,Technology,Lead Time (weeks),Stock,Warranty (months),Notes
+CM-D31-24X8,DOCSIS 3.1 cable modem 2x2 OFDM 24x8,89.00,USD,Cable modem,DOCSIS 3.1,6,1200,24,Best seller for HFC upgrades
+CM-D31-32X8-W6,DOCSIS 3.1 gateway with Wi-Fi 6,142.50,USD,Gateway,DOCSIS 3.1,8,640,24,Includes voice port
+CM-D30-16X4,DOCSIS 3.0 cable modem 16x4,39.90,USD,Cable modem,DOCSIS 3.0,4,3100,12,End-of-sale Q4
+CM-D40-FDX,DOCSIS 4.0 full-duplex modem,265.00,USD,Cable modem,DOCSIS 4.0,14,80,36,Early availability
+ONU-GP-1GE,GPON ONU 1x GE bridge,18.75,USD,ONU,GPON,5,8000,12,Bridge mode only
+ONU-GP-4GE-W5,GPON ONU 4x GE Wi-Fi 5 dual band,46.20,USD,ONU,GPON,6,2300,24,TR-069 managed
+ONU-XGS-10G-W6,XGS-PON ONU 10G with Wi-Fi 6,118.00,USD,ONU,XGS-PON,10,450,24,USP/TR-369 ready
+ONU-XGS-10G-W7,XGS-PON ONU 10G with Wi-Fi 7,169.00,USD,ONU,XGS-PON,12,120,36,Premium tier
+OLT-LC-GP16,OLT line card 16-port GPON,2450.00,USD,OLT,GPON,8,35,36,Requires chassis v2
+OLT-LC-XGS8,OLT line card 8-port XGS-PON combo,4890.00,USD,OLT,XGS-PON / GPON combo,10,18,36,Combo optics sold separately
+SFP-GP-C+,GPON SFP optic class C+,64.00,USD,Optic,GPON,3,900,12,
+SFP-XGS-N1,XGS-PON SFP+ optic N1,189.00,USD,Optic,XGS-PON,6,260,12,
+LIC-PROV-1K,Provisioning software license 1000 subscribers,1500.00,USD,Software,DOCSIS/PON,1,,12,Annual subscription
+LIC-PROV-10K,Provisioning software license 10000 subscribers,12000.00,USD,Software,DOCSIS/PON,1,,12,Volume discount from 50K
+LIC-ACS-TR069-1K,TR-069 ACS license 1000 devices,900.00,USD,Software,TR-069,1,,12,
